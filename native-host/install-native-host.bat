@@ -12,10 +12,10 @@ set "INSTALL_DIR=%LOCALAPPDATA%\NLMTracker"
 set "HOST_NAME=com.astraglobal.nlm_tracker"
 set "REG_KEY=HKCU\SOFTWARE\Google\Chrome\NativeMessagingHosts\%HOST_NAME%"
 set "SCRIPT_DIR=%~dp0"
-set "MANIFEST_JSON=%SCRIPT_DIR%..\extension\manifest.json"
 set "HOST_BAT=%INSTALL_DIR%\get_username.bat"
 set "HOST_JSON=%INSTALL_DIR%\%HOST_NAME%.json"
 set "TMP_PS1=%TEMP%\nlm_native_host_%RANDOM%%RANDOM%.ps1"
+set "EXTENSION_ID=%~1"
 
 echo ============================================================
 echo  NotebookLM Usage Tracker - Native Host Installer
@@ -24,8 +24,13 @@ echo  No admin rights required. Registry target: HKCU
 echo ============================================================
 echo.
 
-if not exist "%MANIFEST_JSON%" (
-    echo [FAIL] Extension manifest not found: %MANIFEST_JSON%
+if "%EXTENSION_ID%"=="" (
+    set /p EXTENSION_ID=Enter Chrome extension ID: 
+)
+
+if "%EXTENSION_ID%"=="" (
+    echo [FAIL] Extension ID is required.
+    echo        Load the unpacked extension in chrome://extensions and copy the ID.
     exit /b 1
 )
 
@@ -48,18 +53,10 @@ if errorlevel 1 (
 
 echo [3/4] Generating native host manifest...
 > "%TMP_PS1%" echo $ErrorActionPreference = 'Stop'
->> "%TMP_PS1%" echo $manifestPath = '%MANIFEST_JSON%'
 >> "%TMP_PS1%" echo $installDir = '%INSTALL_DIR%'
 >> "%TMP_PS1%" echo $hostName = '%HOST_NAME%'
 >> "%TMP_PS1%" echo $hostBat = Join-Path $installDir 'get_username.bat'
->> "%TMP_PS1%" echo $manifest = Get-Content -Raw -Path $manifestPath ^| ConvertFrom-Json
->> "%TMP_PS1%" echo if (-not $manifest.key) { throw 'manifest.json is missing key' }
->> "%TMP_PS1%" echo $bytes = [Convert]::FromBase64String($manifest.key)
->> "%TMP_PS1%" echo $sha = [System.Security.Cryptography.SHA256]::Create()
->> "%TMP_PS1%" echo try { $hash = $sha.ComputeHash($bytes) } finally { $sha.Dispose() }
->> "%TMP_PS1%" echo $hex = -join ($hash[0..15] ^| ForEach-Object { $_.ToString('x2') })
->> "%TMP_PS1%" echo $alphabet = 'abcdefghijklmnop'
->> "%TMP_PS1%" echo $extensionId = -join ($hex.ToCharArray() ^| ForEach-Object { $alphabet[[Convert]::ToInt32($_.ToString(), 16)] })
+>> "%TMP_PS1%" echo $extensionId = '%EXTENSION_ID%'
 >> "%TMP_PS1%" echo $nativeManifest = [ordered]@{
 >> "%TMP_PS1%" echo ^  name = $hostName
 >> "%TMP_PS1%" echo ^  description = 'NotebookLM Usage Tracker native host'
@@ -79,7 +76,7 @@ if not "%PS_EXIT%"=="0" (
     exit /b 1
 )
 
-echo      Detected stable extension ID: %EXTENSION_ID%
+echo      Using extension ID: %EXTENSION_ID%
 
 echo [4/4] Registering native messaging host in HKCU...
 reg add "%REG_KEY%" /ve /t REG_SZ /d "%HOST_JSON%" /f >nul 2>&1
