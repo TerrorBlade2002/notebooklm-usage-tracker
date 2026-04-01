@@ -13,18 +13,10 @@
   }
   window.__nlmTrackerLoaded = true;
 
-  // ---- ALLOWED NOTEBOOKS (exact match only) ----
-  const ALLOWED_NOTEBOOKS = new Set([
-    "CDS - Loans",
-    "Cash lane Collections",
-    "Cash lane Loans",
-    "Premier Acceptance SOPs",
-    "Asset Recovery Debt Collection Training",
-    "EVEREST RECEIVABLES Debt Collection Training",
-    "ARM - SB & HB Contingency",
-    '"Guglielmo & Associates" Debt Collection Training Module',
-    "Key2 Recovery Debt Collection Process",
-  ]);
+  // ---- TRACKING SCOPE ----
+  // Set to null to track all notebooks.
+  // If you want to restrict tracking later, replace with a Set of exact notebook names.
+  const ALLOWED_NOTEBOOKS = null;
 
   // ---- STATE ----
   let currentNotebookName = null;
@@ -150,7 +142,8 @@
   async function checkForNewExchanges() {
     if (!isNotebookPage()) return;
     const name = extractNotebookName();
-    if (!name || !ALLOWED_NOTEBOOKS.has(name)) return;
+    if (!name) return;
+    if (ALLOWED_NOTEBOOKS && !ALLOWED_NOTEBOOKS.has(name)) return;
     const nbId = getNotebookId();
     if (!nbId) return;
 
