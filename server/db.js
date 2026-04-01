@@ -1,16 +1,23 @@
 const { Pool } = require("pg");
 
-if (!process.env.DATABASE_URL) {
+const dbUrl = process.env.DATABASE_URL || "";
+
+if (!dbUrl) {
   console.warn("WARNING: DATABASE_URL is not set. DB operations will fail until it is configured.");
 }
 
-const dbUrl = process.env.DATABASE_URL || "";
-const useSSL = dbUrl.includes("railway.app") || dbUrl.includes("railway.internal");
+const useSSL = dbUrl.includes("railway");
 
 const pool = new Pool({
   connectionString: dbUrl || undefined,
   ssl: useSSL ? { rejectUnauthorized: false } : false,
   connectionTimeoutMillis: 10000,
+});
+
+// CRITICAL: Pool emits 'error' on idle client failures.
+// Without this listener, Node crashes with an unhandled error.
+pool.on("error", (err) => {
+  console.error("Postgres pool idle client error:", err.message);
 });
 
 async function initializeDatabase() {

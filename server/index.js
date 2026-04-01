@@ -1,8 +1,36 @@
+// Catch everything at the process level so we never silently die
+process.on("uncaughtException", (err) => {
+  console.error("UNCAUGHT EXCEPTION:", err);
+});
+process.on("unhandledRejection", (err) => {
+  console.error("UNHANDLED REJECTION:", err);
+});
+
+console.log("=== SERVER STARTING ===");
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("PORT env:", process.env.PORT);
+console.log("DATABASE_URL set:", !!process.env.DATABASE_URL);
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-require("dotenv").config();
-const db = require("./db");
+
+let db;
+try {
+  db = require("./db");
+  console.log("db.js loaded OK");
+} catch (e) {
+  console.error("db.js failed to load:", e.message);
+  db = {
+    pool: null,
+    initializeDatabase: async () => { throw new Error("DB module failed to load"); },
+    logInteraction: async () => { throw new Error("DB unavailable"); },
+    getFilteredLogs: async () => [],
+    getStats: async () => [],
+    getUniqueNotebookNames: async () => [],
+    getUniqueUsernames: async () => [],
+  };
+}
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -160,26 +188,26 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Internal server error" });
 });
 
-async function start() {
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on 0.0.0.0:${PORT}\nDashboard: http://localhost:${PORT}/dashboard`);
-  });
+// ---- START ----
+const server = app.listen(PORT, "0.0.0.0", () => {
+  console.log(`=== SERVER LISTENING on 0.0.0.0:${PORT} ===`);
+});
 
-  const initDb = async () => {
-    try {
-      await db.initializeDatabase();
-      if (!dbReady) {
-        console.log("Database connection is ready");
-      }
-      dbReady = true;
-    } catch (e) {
-      dbReady = false;
-      console.error("Database init failed, will retry in 15s:", e.message || e);
-    }
-  };
+server.on("error", (err) => {
+  console.error("Server listen error:", err);
+});
 
-  await initDb();
-  setInterval(initDb, 15000);
-}
+// DB init - non-blocking, retries forever
+const initDb = async () => {
+  try {
+    await db.initializeDatabase();
+    if (!dbReady) console.log("=== DATABASE READY ===");
+    dbReady = true;
+  } catch (e) {
+    dbReady = false;
+    console.error("DB init failed (will retry in 15s):", e.message || e);
+  }
+};
 
-start();
+initDb();
+setInterval(initDb, 15000);
