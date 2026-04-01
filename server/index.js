@@ -5,13 +5,8 @@ require("dotenv").config();
 const db = require("./db");
 
 const app = express();
-const PORT = process.env.PORT || process.env.APP_PORT;
+const PORT = process.env.PORT || 3001;
 let dbReady = false;
-
-if (!PORT) {
-  console.error("PORT is not set. Define PORT (Railway sets this automatically) or APP_PORT for local runs.");
-  process.exit(1);
-}
 
 app.use(cors());
 app.use(express.json());
@@ -166,8 +161,8 @@ app.use((err, req, res, next) => {
 });
 
 async function start() {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}\nDashboard: http://localhost:${PORT}/dashboard`);
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on 0.0.0.0:${PORT}\nDashboard: http://localhost:${PORT}/dashboard`);
   });
 
   const initDb = async () => {

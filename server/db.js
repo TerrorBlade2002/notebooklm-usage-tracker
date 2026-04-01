@@ -1,10 +1,16 @@
 const { Pool } = require("pg");
 
+if (!process.env.DATABASE_URL) {
+  console.warn("WARNING: DATABASE_URL is not set. DB operations will fail until it is configured.");
+}
+
+const dbUrl = process.env.DATABASE_URL || "";
+const useSSL = dbUrl.includes("railway.app") || dbUrl.includes("railway.internal");
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL?.includes("railway")
-    ? { rejectUnauthorized: false }
-    : false,
+  connectionString: dbUrl || undefined,
+  ssl: useSSL ? { rejectUnauthorized: false } : false,
+  connectionTimeoutMillis: 10000,
 });
 
 async function initializeDatabase() {
