@@ -197,17 +197,18 @@ server.on("error", (err) => {
   console.error("Server listen error:", err);
 });
 
-// DB init - non-blocking, retries forever
+// DB init - non-blocking, retries until connected then stops
 const initDb = async () => {
+  if (dbReady) return; // Already connected, no need to retry
   try {
     await db.initializeDatabase();
-    if (!dbReady) console.log("=== DATABASE READY ===");
     dbReady = true;
+    console.log("=== DATABASE READY ===");
+    clearInterval(dbRetryInterval);
   } catch (e) {
-    dbReady = false;
     console.error("DB init failed (will retry in 15s):", e.message || e);
   }
 };
 
 initDb();
-setInterval(initDb, 15000);
+const dbRetryInterval = setInterval(initDb, 15000);
