@@ -2,6 +2,7 @@
     "manifest_version": 3,
     "name": "NotebookLM Usage Tracker",
     "version": "1.0.0",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr3nGOHTM8KmjTznaG3YjIUnN0pKLqOHjz4YaXFGWlT8B5xFXVpjWk7JvYXMRxVKCiFdEMRPG1GRz9gRVXm5JCp0bXFmpN1qHnVfLkg3pvJfYWRyAFdp8LSpSmYjU8kVqS0dAMklfo6kGiU7n3E2qlX5cSwqW2oAHMRpCK1YkfLSt2g3MNDR7pyXYpBJZs0bYrH4LDL3Y1TZCtV3J0xLW4K1Gf6xFPX3Ew3bGr9ZnDm2pRI3NVt2H+BfR0PuXTJmZS1LnGrfP0K5TQ8SkW6j0K2A5hGEg+I7El1ZB+mpk8r2FWzKFVIdUOVyfGH1T2ZAQQU7Kcq8l1dRp1FU0QIDAQAB",
     "description": "Tracks NotebookLM notebook usage across agents for analytics and reporting",
     "permissions": [
           "storage",
