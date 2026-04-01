@@ -6,5 +6,4 @@ RUN npm install --production
 
 COPY server/ ./
 
-EXPOSE 3000
 CMD ["node", "index.js"]

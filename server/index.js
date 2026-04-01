@@ -5,7 +5,13 @@ require("dotenv").config();
 const db = require("./db");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || process.env.APP_PORT;
+let dbReady = false;
+
+if (!PORT) {
+  console.error("PORT is not set. Define PORT (Railway sets this automatically) or APP_PORT for local runs.");
+  process.exit(1);
+}
 
 app.use(cors());
 app.use(express.json());
@@ -17,7 +23,14 @@ app.use((req, res, next) => {
 });
 
 // Health check
-app.get("/health", (req, res) => res.json({ status: "ok", uptime: process.uptime() }));
+app.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    uptime: process.uptime(),
+    db_ready: dbReady,
+    port: PORT,
+  });
+});
 
 // ---- POST /api/log - Receive logs from Chrome Extension ----
 app.post("/api/log", async (req, res) => {
@@ -153,13 +166,25 @@ app.use((err, req, res, next) => {
 });
 
 async function start() {
-  try {
-    await db.initializeDatabase();
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}\nDashboard: http://localhost:${PORT}/dashboard`));
-  } catch (e) {
-    console.error("Failed to start:", e);
-    process.exit(1);
-  }
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}\nDashboard: http://localhost:${PORT}/dashboard`);
+  });
+
+  const initDb = async () => {
+    try {
+      await db.initializeDatabase();
+      if (!dbReady) {
+        console.log("Database connection is ready");
+      }
+      dbReady = true;
+    } catch (e) {
+      dbReady = false;
+      console.error("Database init failed, will retry in 15s:", e.message || e);
+    }
+  };
+
+  await initDb();
+  setInterval(initDb, 15000);
 }
 
 start();
