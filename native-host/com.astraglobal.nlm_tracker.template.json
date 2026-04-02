@@ -1,9 +1,0 @@
-{
-  "name": "com.astraglobal.nlm_tracker",
-  "description": "NotebookLM Usage Tracker native host",
-  "path": "C:\\Users\\arnab.mondal\\notebooklm-usage-tracker\\notebooklm-usage-tracker\\native-host\\get_username.bat",
-  "type": "stdio",
-  "allowed_origins": [
-    "chrome-extension://YOUR_EXTENSION_ID_HERE/"
-  ]
-}
