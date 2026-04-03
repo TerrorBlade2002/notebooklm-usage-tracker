@@ -55,6 +55,15 @@ app.get("/health", (req, res) => {
   });
 });
 
+// Privacy policy page for Chrome Web Store listing
+app.get("/privacy-policy", (req, res) => {
+  res.sendFile(path.join(__dirname, "dashboard", "privacy-policy.html"));
+});
+
+app.get("/privacy", (req, res) => {
+  res.redirect("/privacy-policy");
+});
+
 // ---- POST /api/log - Receive logs from Chrome Extension ----
 app.post("/api/log", async (req, res) => {
   try {
