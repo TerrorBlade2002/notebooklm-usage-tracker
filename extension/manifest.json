@@ -3,7 +3,6 @@
     "name": "NotebookLM Usage Tracker",
     "version": "1.0.0",
     "description": "Tracks NotebookLM notebook usage across agents for analytics and reporting",
-    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmPIa7rGepnjvx7JrEO/5voKcTZuB7uFrp8SYJPNkPBGEMqfynwFQSFceXFANPeRIjPFgpkC5ejeecZqL7ivuKiK00XdZtLx0A8uX7X70/5q3ZVq9OonuyAPwvabDRQ5HG5h5goKZrbYM9GPNT0npTmkjI3w8hVhb8DbHYgnj9zshhsDmdpC+5yudokHU6cw/jqzjcsMa3ntX835Ghz0EiP1pGDFVhOyqWUTdEoQNoV3vSHRzOG7D/q1KD1xr8T0TSpGplX4T8yiR+sX97uzh7PlT6d0MFYmd64cAKtX1A9NnXHI+6FQBYowNlFjNV0ybt7B1wDoN1y2Wa6/u4NqABQIDAQAB",
     "permissions": [
           "storage",
           "nativeMessaging",

@@ -45,7 +45,7 @@ set "VBS=%TEMP%\nlm_mkjson_%RANDOM%.vbs"
 >> "%VBS%" echo f.WriteLine "  ""path"": """ ^& batPath ^& ""","
 >> "%VBS%" echo f.WriteLine "  ""type"": ""stdio"","
 >> "%VBS%" echo f.WriteLine "  ""allowed_origins"": ["
->> "%VBS%" echo f.WriteLine "    ""chrome-extension://ihghiimblkofndbjbeilpoaeimgbppmd/"""
+>> "%VBS%" echo f.WriteLine "    ""chrome-extension://iooadpogbmnffkpejjnadggakjakapfh/"""
 >> "%VBS%" echo f.WriteLine "  ]"
 >> "%VBS%" echo f.WriteLine "}"
 >> "%VBS%" echo f.Close

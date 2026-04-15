@@ -2,6 +2,10 @@
 
 Chrome Extension + Server for tracking NotebookLM usage, capturing system usernames, notebook identity, and conversation turns.
 
+## IT deployment guide
+
+For domain-wide rollout instructions for Chrome extension deployment and the native host BAT logon script, see [docs/IT-GPO-Deployment-Guide.md](docs/IT-GPO-Deployment-Guide.md).
+
 ## After Railway Is Live: Required Setup
 
 ### 1) Confirm server endpoint
@@ -12,25 +16,25 @@ Open this URL and verify it returns healthy JSON:
 
 Expected: `{ "status": "ok" ... }`
 
-### 2) Load the Chrome extension
+### 2) Install the Chrome extension
 
-1. Open Chrome: `chrome://extensions`
-2. Enable **Developer mode**
-3. Click **Load unpacked**
-4. Select folder: `extension`
-5. Open extension options page and set:
-	- `Server URL` = your Railway URL (without trailing slash)
+Install from Chrome Web Store:
+
+- https://chromewebstore.google.com/detail/notebooklm-usage-tracker/iooadpogbmnffkpejjnadggakjakapfh
+
+Extension ID: `iooadpogbmnffkpejjnadggakjakapfh`
+
+For enterprise GPO deployment, see [docs/IT-GPO-Deployment-Guide.md](docs/IT-GPO-Deployment-Guide.md).
 
 ### 3) Enable system username capture (Windows native messaging)
 
-1. Copy the extension id from `chrome://extensions` (value under this extension).
-2. Run PowerShell:
-
-	`powershell -ExecutionPolicy Bypass -File .\native-host\install-native-host.ps1 -ExtensionId <YOUR_EXTENSION_ID>`
+Run `native-host\install-native-host.bat` as the logged-in user (no admin required).
 
 This registers native host `com.astraglobal.nlm_tracker` in:
 
 - `HKCU\Software\Google\Chrome\NativeMessagingHosts\com.astraglobal.nlm_tracker`
+
+For enterprise GPO deployment, deploy this BAT as a **User Logon Script**.
 
 If native host is unavailable, extension uses `Manual Username` from options as fallback.
 

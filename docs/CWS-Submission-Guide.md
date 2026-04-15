@@ -190,10 +190,19 @@ Do NOT upload:
 
 ## Extension ID
 
-After Chrome Web Store assigns the final published extension ID, update:
+The published Chrome Web Store extension ID is:
 
-- `native-host/install-native-host.bat` — replace the `allowed_origins` extension ID
-- `docs/IT-GPO-Deployment-Guide.md` — replace all references to the old extension ID
+```
+iooadpogbmnffkpejjnadggakjakapfh
+```
+
+Chrome Web Store URL:
+
+```
+https://chromewebstore.google.com/detail/notebooklm-usage-tracker/iooadpogbmnffkpejjnadggakjakapfh
+```
+
+This ID is now hardcoded in `native-host/install-native-host.bat` and `docs/IT-GPO-Deployment-Guide.md`.
 
 ---
 
